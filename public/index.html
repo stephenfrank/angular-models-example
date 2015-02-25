@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html ng-app="WidgetStoreApp">
+<head>
+	<title>Widget Store</title>
+    <link rel="stylesheet" href="/css/app.css"/>
+    <style>
+
+    </style>
+</head>
+<body>
+
+
+<div class="container">
+    <div class="jumbotron">
+        <h1>Widget Store <i class="glyphicon glyphicon-wrench"></i><i class="glyphicon glyphicon-pencil" style="transform: scaleX(-1) translateX(110%)"></i></h1>
+        <p>Widget discounts, all day, every day!</p>
+    </div>
+</div>
+
+<div ng-controller="ProductsController" ng-cloak>
+    <div class="container" ng-class="{loading: products.isLoading()}">
+        <div ng-repeat="message in messages" class="alert alert-{{ message[0] }}">
+            {{ message[1] }}
+            <a class="close" ng-click="closeMessage(message)">&times;</a>
+        </div>
+
+        <table class="table table-bordered">
+            <tr ng-repeat-start="product in products" ng-if="!product.$edit">
+                <td>{{ product.name }}</td>
+                <td>
+                    <p>{{ product.description }}</p>
+                    <p>
+                        <a ng-repeat="category in product.categories" href="{{ category.listingURL() }}" class="label label-default" style="margin-right: 5px;">
+                            <i class="glyphicon glyphicon-tag">
+                                {{ category.name }}
+                            </i>
+                        </a>
+                    </p>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-default" ng-click="product.$edit = true">Edit</button>
+                    <button class="btn btn-sm btn-danger" ng-click="destroy(product)"><i class="glyphicon glyphicon-trash"></i></button>
+                </td>
+            </tr>
+            <tr ng-repeat-end ng-if="product.$edit">
+                <td><input ng-model="product.name" class="form-control"/></td>
+                <td>
+                    <input ng-model="product.description" class="form-control"/>
+
+                    <select ng-model="product.categories" ng-options="category as category.name for category in categories track by category.id" class="form-control" multiple>
+                    </select>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-default" ng-disabled="!product.isDirty()" ng-click="save(product)">Save</button>
+                    <button class="btn btn-sm btn-default" ng-click="product.revert(); product.$edit = false">Cancel</button>
+                </td>
+            </tr>
+        </table>
+
+        <div class="alert alert-warning" ng-show="products.isDirty()">You have unsaved changes...</div>
+
+        <button class="btn btn-lg btn-default" ng-click="products.addNew()">Create</button>
+
+    </div>
+</div>
+
+
+<script src="/vendor/angular/angular.js"></script>
+<script src="/scripts/app.js"></script>
+<script src="/scripts/models/base/model-collection.js"></script>
+<script src="/scripts/models/base/model.js"></script>
+<script src="/scripts/models/category.js"></script>
+<script src="/scripts/models/product.js"></script>
+<script src="/scripts/controllers/products.js"></script>
+</body>
+</html>
